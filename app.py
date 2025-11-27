@@ -11,26 +11,33 @@ import os
 from googleapiclient.http import MediaIoBaseDownload
 import io
 
-SCOPES = ['https://www.googleapis.com/auth/drive.file']
-DRIVE_FOLDER_ID = "1PtYcu-xGU9-L0pEa79vqXah4YiAy92zZ"  # create a folder + paste ID
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+import streamlit as st
+
+SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 
 def get_drive_service():
-    creds = None
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    if not creds or not creds.valid:
-        flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-        creds = flow.run_console()  # <-- console-based OAuth, works without a browser
+    gd = st.secrets["google_drive"]
 
-        # Save token for reuse
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
+    creds = Credentials(
+        None,
+        refresh_token=gd["refresh_token"],
+        client_id=gd["client_id"],
+        client_secret=gd["client_secret"],
+        token_uri=gd["token_uri"],
+        scopes=SCOPES
+    )
 
-    return build('drive', 'v3', credentials=creds)
+    service = build("drive", "v3", credentials=creds)
+    return service
+
+def get_drive_folder_id():
+    return st.secrets["google_drive"]["drive_folder_id"]
+
 
 def get_drive_image_url(file_id):
     return f"https://drive.google.com/uc?export=view&id={file_id}"
-
 
 
 WORDS_FILE = "words.json"
@@ -146,7 +153,7 @@ elif page == "Word Library":
 
       # Upload to Drive
       service = get_drive_service()
-      file_metadata = {"name": new_filename, "parents": [DRIVE_FOLDER_ID]}
+      file_metadata = {"name": new_filename, "parents": [get_drive_folder_id()]}
       media = MediaFileUpload(temp_path, resumable=True)
       uploaded = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
 
