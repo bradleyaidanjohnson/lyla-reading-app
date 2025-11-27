@@ -82,6 +82,14 @@ def save_words(words):
 
 words = load_words()
 
+def display_word(word, font_size=120):
+    return f"""
+    <h1 style='font-size:{font_size}px; text-align:center; font-family: "Comic Sans MS", cursive, sans-serif;'>
+        {word}
+    </h1>
+    """
+
+
 # ---------- Sidebar Navigation ----------
 page = st.sidebar.selectbox("Menu", ["Play", "Word Library", "Settings"])
 
@@ -221,7 +229,7 @@ elif page == "Play":
 
         # 1. WORD ONLY (no image visible)
         if st.session_state.mode == "word_only":
-            word_box.markdown(f"<h1 style='font-size:120px;text-align:center;'>{word}</h1>", unsafe_allow_html=True)
+            word_box.markdown(display_word(word, 120), unsafe_allow_html=True)
             image_box.empty()  # <<< This force-removes previous picture
             time.sleep(st.session_state.get("word_time", 3))
             st.session_state.mode = "word_img"
@@ -229,7 +237,7 @@ elif page == "Play":
 
         # 2. WORD + IMAGE
         elif st.session_state.mode == "word_img":
-            word_box.markdown(f"<h1 style='font-size:90px;text-align:center;'>{word}</h1>", unsafe_allow_html=True)
+            word_box.markdown(display_word(word, 120), unsafe_allow_html=True)
             if img_path:
                 image_box.image(img_path, use_container_width=True)
             time.sleep(st.session_state.get("reveal_time", 3))
