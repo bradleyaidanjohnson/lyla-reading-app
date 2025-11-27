@@ -90,7 +90,7 @@ st.title("📖 Reading Trainer")
 # ---------- Settings Page ----------
 if page == "Settings":
     st.subheader("Timing Controls")
-    word_time = st.number_input("Time showing word only (seconds)", 1, 10, 3)
+    word_time = st.number_input("Time showing word only (seconds)", 1, 20, 3)
     reveal_time = st.number_input("Time showing word + picture (seconds)", 1, 10, 3)
 
     # Save values in session_state
