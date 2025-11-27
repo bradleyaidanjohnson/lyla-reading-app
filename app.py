@@ -20,9 +20,12 @@ def get_drive_service():
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
     if not creds or not creds.valid:
         flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-        creds = flow.run_local_server(port=0)
+        creds = flow.run_console()  # <-- console-based OAuth, works without a browser
+
+        # Save token for reuse
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
+
     return build('drive', 'v3', credentials=creds)
 
 def get_drive_image_url(file_id):
