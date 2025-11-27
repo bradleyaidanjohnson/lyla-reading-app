@@ -17,7 +17,7 @@ import streamlit as st
 
 import base64
 
-def load_font_css(font_path="fonts/ComicNeue-Bold.ttf", font_name="ComicNeue"):
+def load_font_css(font_path="fonts/comic-neue.bold.ttf", font_name="ComicNeue"):
     with open(font_path, "rb") as f:
         font_data = f.read()
     encoded = base64.b64encode(font_data).decode()
@@ -108,25 +108,6 @@ def save_words(words):
         json.dump(words, f, indent=4)
 
 words = load_words()
-
-st.markdown(
-    """
-    <style>
-    @font-face {
-        font-family: 'ComicNeue';
-        src: url('fonts/comic-neue.bold.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-    }
-
-    .comic-word {
-        font-family: 'ComicNeue', sans-serif;
-        text-align: center;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
 def display_word(word, font_size=120):
     return f"""
