@@ -84,10 +84,9 @@ words = load_words()
 
 def display_word(word, font_size=120):
     return f"""
-    <h1 style='font-size:{font_size}px; text-align:center; font-family: "Comic Sans MS", cursive, sans-serif;'>
-        {word}
-    </h1>
+    <h1 class='comic-word' style='font-size:{font_size}px;'>{word}</h1>
     """
+
 
 
 # ---------- Sidebar Navigation ----------
