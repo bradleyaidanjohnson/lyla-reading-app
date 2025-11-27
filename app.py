@@ -82,11 +82,30 @@ def save_words(words):
 
 words = load_words()
 
+st.markdown(
+    """
+    <style>
+    @font-face {
+        font-family: 'ComicNeue';
+        src: url('fonts/comic-neue.bold.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .comic-word {
+        font-family: 'ComicNeue', sans-serif;
+        text-align: center;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 def display_word(word, font_size=120):
     return f"""
     <h1 class='comic-word' style='font-size:{font_size}px;'>{word}</h1>
     """
-
 
 
 # ---------- Sidebar Navigation ----------
