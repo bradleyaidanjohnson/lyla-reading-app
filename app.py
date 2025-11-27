@@ -15,6 +15,33 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 import streamlit as st
 
+import base64
+
+def load_font_css(font_path="fonts/ComicNeue-Bold.ttf", font_name="ComicNeue"):
+    with open(font_path, "rb") as f:
+        font_data = f.read()
+    encoded = base64.b64encode(font_data).decode()
+    
+    css = f"""
+    <style>
+    @font-face {{
+        font-family: '{font_name}';
+        src: url(data:font/ttf;base64,{encoded}) format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }}
+    .comic-word {{
+        font-family: '{font_name}', sans-serif;
+        text-align: center;
+    }}
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
+
+# Call this once at the top
+load_font_css()
+
+
 SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 
 def get_drive_service():
@@ -101,12 +128,10 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
 def display_word(word, font_size=120):
     return f"""
     <h1 class='comic-word' style='font-size:{font_size}px;'>{word}</h1>
     """
-
 
 # ---------- Sidebar Navigation ----------
 page = st.sidebar.selectbox("Menu", ["Play", "Word Library", "Settings"])
