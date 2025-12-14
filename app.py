@@ -107,7 +107,57 @@ def save_words(words):
     with open(WORDS_FILE, "w") as f:
         json.dump(words, f, indent=4)
 
-words = load_words()
+def sync_words_from_drive():
+    """
+    Load word list from Google Drive folder and sync to local words.json.
+    Drive is treated as the source of truth for existence.
+    """
+    service = get_drive_service()
+    folder_id = get_drive_folder_id()
+
+    # Fetch files in folder
+    results = service.files().list(
+        q=f"'{folder_id}' in parents and trashed = false",
+        fields="files(id, name)"
+    ).execute()
+
+    drive_files = results.get("files", [])
+
+    # Load existing local words (to preserve 'active' flags)
+    existing = {w["drive_id"]: w for w in load_words()}
+
+    synced_words = []
+
+    for f in drive_files:
+        name = f["name"]
+
+        # Expecting: word_uuid.ext
+        if "_" not in name:
+            continue
+
+        word = name.split("_", 1)[0]
+
+        if f["id"] in existing:
+            # Preserve existing settings (e.g. active flag)
+            synced_words.append(existing[f["id"]])
+        else:
+            # New word found in Drive
+            synced_words.append({
+                "word": word,
+                "image": name,
+                "drive_id": f["id"],
+                "active": True
+            })
+
+    save_words(synced_words)
+    return synced_words
+
+if "words_loaded" not in st.session_state:
+    words = sync_words_from_drive()
+    st.session_state.words_loaded = True
+else:
+    words = load_words()
+
 
 def display_word(word, font_size=120):
     return f"""
