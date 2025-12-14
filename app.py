@@ -61,7 +61,7 @@ st.markdown("""
 <style>
 button[kind="secondary"][aria-label="⏭"] {
     font-size: 0.75rem;
-    padding: 0.1rem 0.4rem;
+    padding: 0.1rem 0.1rem;
 }
 </style>
 """, unsafe_allow_html=True)
