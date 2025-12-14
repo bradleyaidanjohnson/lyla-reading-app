@@ -311,7 +311,7 @@ elif page == "Word Library":
 
 # ---------- Play Mode Page ----------
 elif page == "Play":
-    # st.subheader("Reading Session")
+    st.subheader("Reading Session")
 
     active_words = [w for w in words if w["active"]]
 
