@@ -30,13 +30,33 @@ def load_font_css(font_path="fonts/comic-neue.bold.ttf", font_name="ComicNeue"):
         font-weight: normal;
         font-style: normal;
     }}
+
     .comic-word {{
         font-family: '{font_name}', sans-serif;
         text-align: center;
+        white-space: nowrap;      /* 🚫 no wrapping */
+        overflow: hidden;         /* clip overflow */
+        text-overflow: ellipsis;  /* optional: … */
+        width: 100%;
     }}
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
+
+
+st.markdown("""
+<style>
+/* Hide Streamlit header + footer */
+header {visibility: hidden;}
+footer {visibility: hidden;}
+
+/* Reduce top padding */
+.block-container {
+    padding-top: 0.5rem;
+}
+</style>
+""", unsafe_allow_html=True)
+
 
 # Call this once at the top
 load_font_css()
@@ -146,7 +166,7 @@ def sync_words_from_drive():
                 "word": word,
                 "image": name,
                 "drive_id": f["id"],
-                "active": True
+                "active": False
             })
 
     save_words(synced_words)
@@ -159,15 +179,29 @@ else:
     words = load_words()
 
 
-def display_word(word, font_size=120):
+def display_word(word, max_size=120, min_size=60):
+    length = len(word)
+    
+    if length <= 5:
+        size = max_size
+    elif length <= 8:
+        size = max_size - 20
+    elif length <= 12:
+        size = max_size - 40
+    else:
+        size = min_size
+
     return f"""
-    <h1 class='comic-word' style='font-size:{font_size}px;'>{word}</h1>
+    <h1 class='comic-word' style='font-size:{size}px;'>{word}</h1>
     """
+
 
 # ---------- Sidebar Navigation ----------
 page = st.sidebar.selectbox("Menu", ["Play", "Word Library", "Settings"])
 
-st.title("📖 Reading Trainer")
+if not st.session_state.get("running", False):
+    st.title("📖 Reading Trainer")
+
 
 # ---------- Settings Page ----------
 if page == "Settings":
