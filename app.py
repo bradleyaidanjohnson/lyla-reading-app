@@ -57,6 +57,16 @@ footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<style>
+button[kind="secondary"][aria-label="⏭"] {
+    font-size: 0.75rem;
+    padding: 0.1rem 0.4rem;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 
 # Call this once at the top
 load_font_css()
@@ -126,6 +136,14 @@ def load_words():
 def save_words(words):
     with open(WORDS_FILE, "w") as f:
         json.dump(words, f, indent=4)
+
+def skip_to_next_word(words):
+    active_words = [w for w in words if w["active"]]
+    if not active_words:
+        return
+
+    st.session_state.current_word = random.choice(active_words)
+    st.session_state.mode = "word_only"
 
 def sync_words_from_drive():
     """
@@ -290,6 +308,7 @@ elif page == "Word Library":
     else:
         st.error("Word + image required")
 
+
 # ---------- Play Mode Page ----------
 elif page == "Play":
     # st.subheader("Reading Session")
@@ -304,18 +323,15 @@ elif page == "Play":
     if "mode" not in st.session_state:
         st.session_state.mode = "word_only"   # word_only → word+image
 
-    # ----- Toggle Play / Stop Button -----
+    # ----- Play / Stop Toggle -----
     is_running = st.session_state.running
-
     label = "⏹ Stop Session" if is_running else "▶ Start Session"
 
     if st.button(label, use_container_width=True):
         if is_running:
-            # Stop
             st.session_state.running = False
             st.session_state.mode = "word_only"
         else:
-            # Start
             if not active_words:
                 st.warning("No active words selected!")
             else:
@@ -324,6 +340,15 @@ elif page == "Play":
                 st.session_state.current_word = random.choice(active_words)
 
         st.rerun()
+
+    # ----- Skip Button (tiny, only when running) -----
+    if st.session_state.running:
+        skip_col = st.columns([1, 8, 1])[1]  # center column
+        with skip_col:
+            if st.button("⏭", key="skip", help="Skip word"):
+                skip_to_next_word(words)
+                st.rerun()
+
 
     # ----- LOOPING DISPLAY -----
     if st.session_state.running:
