@@ -292,7 +292,7 @@ elif page == "Word Library":
 
 # ---------- Play Mode Page ----------
 elif page == "Play":
-    st.subheader("Reading Session")
+    # st.subheader("Reading Session")
 
     active_words = [w for w in words if w["active"]]
 
@@ -304,22 +304,25 @@ elif page == "Play":
     if "mode" not in st.session_state:
         st.session_state.mode = "word_only"   # word_only → word+image
 
-    # ----- Start / Stop Buttons -----
-    start = st.button("▶ Start Session", disabled=st.session_state.running)
-    stop = st.button("⏹ Stop Session", disabled=not st.session_state.running)
+    # ----- Toggle Play / Stop Button -----
+    is_running = st.session_state.running
 
-    if start:
-        if not active_words:
-            st.warning("No active words selected!")
-        else:
-            st.session_state.running = True
+    label = "⏹ Stop Session" if is_running else "▶ Start Session"
+
+    if st.button(label, use_container_width=True):
+        if is_running:
+            # Stop
+            st.session_state.running = False
             st.session_state.mode = "word_only"
-            st.session_state.current_word = random.choice(active_words)
-            st.rerun()
+        else:
+            # Start
+            if not active_words:
+                st.warning("No active words selected!")
+            else:
+                st.session_state.running = True
+                st.session_state.mode = "word_only"
+                st.session_state.current_word = random.choice(active_words)
 
-    if stop:
-        st.session_state.running = False
-        st.session_state.mode = "word_only"
         st.rerun()
 
     # ----- LOOPING DISPLAY -----
