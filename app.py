@@ -46,16 +46,16 @@ def load_font_css(font_path="fonts/comic-neue.bold.ttf", font_name="ComicNeue"):
 
 st.markdown("""
 <style>
-/* Hide Streamlit header + footer */
-header {visibility: hidden;}
-footer {visibility: hidden;}
-
-/* Reduce top padding */
+/* Reduce top padding without killing sidebar toggle */
 .block-container {
     padding-top: 0.5rem;
 }
+
+/* Hide footer only */
+footer { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
+
 
 st.markdown("""
 <style>
@@ -219,6 +219,12 @@ page = st.sidebar.selectbox("Menu", ["Play", "Word Library", "Settings"])
 
 if not st.session_state.get("running", False):
     st.title("📖 Reading Trainer")
+    st.markdown("""
+    <style>
+    header { display: none; }
+    </style>
+    """, unsafe_allow_html=True)
+
 
 
 # ---------- Settings Page ----------
@@ -311,7 +317,7 @@ elif page == "Word Library":
 
 # ---------- Play Mode Page ----------
 elif page == "Play":
-    st.subheader("Reading Session")
+    # st.subheader("Reading Session")
 
     active_words = [w for w in words if w["active"]]
 
